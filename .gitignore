@@ -1,0 +1,11 @@
+# Python
+__pycache__/
+*.pyc
+.env
+
+# Visual Studio / VSCode
+.vscode/
+*.code-workspace
+
+# Logs
+*.log

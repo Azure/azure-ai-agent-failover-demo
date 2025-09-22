@@ -1,0 +1,51 @@
+name: Agent Failover Demo
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  deploy-and-test:
+    runs-on: ubuntu-latest
+    env:
+      AGENT_PROJECT: demoAgentProject
+      AZURE_AI_KEY: ${{ secrets.AZURE_AI_KEY }}
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.x'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install requests
+
+    - name: Azure Login
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    - name: Deploy Primary Region
+      run: |
+        chmod +x ./scripts/deploy.sh
+        ./scripts/deploy.sh eastus
+
+    - name: Test Agent APIs in Primary Region
+      run: |
+        chmod +x ./scripts/test-agent.py
+        python ./scripts/test-agent.py
+
+    - name: Deploy Secondary Region (Failover)
+      run: |
+        chmod +x ./scripts/failover.sh
+        ./scripts/failover.sh westus
+
+    - name: Test Agent APIs in Secondary Region
+      run: |
+        python ./scripts/test-agent.py

@@ -1,0 +1,19 @@
+{
+  "name": "demoAgent",
+  "instructions": "You are a helpful assistant for customer failover scenarios.",
+  "model": {
+    "provider": "azureOpenAI",
+    "deployment": "gpt-4o-mini",
+    "temperature": 0.7,
+    "maxTokens": 800
+  },
+  "tools": [
+    {
+      "name": "search",
+      "type": "azureCognitiveSearch",
+      "endpoint": "https://<search-service>.search.windows.net",
+      "index": "faq",
+      "apiKeySecret": "SearchApiKey"
+    }
+  ]
+}
